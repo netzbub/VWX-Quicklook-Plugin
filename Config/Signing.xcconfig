@@ -1,0 +1,5 @@
+// Code signing. Put your own team ID into Config/Local.xcconfig (not committed):
+//   DEVELOPMENT_TEAM = XXXXXXXXXX
+// Without a team, the build is signed to run locally only.
+CODE_SIGN_STYLE = Automatic
+#include? "Local.xcconfig"

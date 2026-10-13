@@ -1,0 +1,127 @@
+name: VWXQuickLook
+
+options:
+  bundleIdPrefix: de.netzbub
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+
+configFiles:
+  Debug: Config/Signing.xcconfig
+  Release: Config/Signing.xcconfig
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_HARDENED_RUNTIME: YES
+    DEAD_CODE_STRIPPING: YES
+
+# Content types declared by Vectorworks. Also imported by the host app so the
+# extensions work on machines without Vectorworks installed.
+x-vw-types: &vwTypes
+  - net.nemetschek.vectorworks.document
+  - net.nemetschek.vectorworks.stationery
+  - net.nemetschek.vectorworks.project
+  - net.nemetschek.vectorworks.working
+
+targets:
+  VWXQuickLook:
+    type: application
+    platform: macOS
+    sources: [App]
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: VWX QuickLook
+        LSApplicationCategoryType: public.app-category.utilities
+        NSHumanReadableCopyright: "GPL-3.0-or-later. Vectorworks is a registered trademark of Vectorworks, Inc."
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: net.nemetschek.vectorworks.document
+            UTTypeDescription: Vectorworks Document
+            UTTypeConformsTo: [public.data, public.content]
+            UTTypeTagSpecification:
+              public.filename-extension: [vwx, mcd]
+          - UTTypeIdentifier: net.nemetschek.vectorworks.stationery
+            UTTypeDescription: Vectorworks Template
+            UTTypeConformsTo: [public.data, public.content]
+            UTTypeTagSpecification:
+              public.filename-extension: [sta]
+          - UTTypeIdentifier: net.nemetschek.vectorworks.project
+            UTTypeDescription: Vectorworks Project File
+            UTTypeConformsTo: [public.data, public.content]
+            UTTypeTagSpecification:
+              public.filename-extension: [vwxp]
+          - UTTypeIdentifier: net.nemetschek.vectorworks.working
+            UTTypeDescription: Vectorworks Working File
+            UTTypeConformsTo: [public.data, public.content]
+            UTTypeTagSpecification:
+              public.filename-extension: [vwxw]
+    entitlements:
+      path: App/VWXQuickLook.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: de.netzbub.vwxql
+    dependencies:
+      - target: VWXThumbnail
+      - target: VWXPreview
+
+  VWXThumbnail:
+    type: app-extension
+    platform: macOS
+    sources: [ThumbnailExtension, Shared]
+    info:
+      path: ThumbnailExtension/Info.plist
+      properties:
+        CFBundleDisplayName: VWX Thumbnail
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.quicklook.thumbnail
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ThumbnailProvider
+          NSExtensionAttributes:
+            QLSupportedContentTypes: *vwTypes
+            QLThumbnailMinimumDimension: 0
+    entitlements:
+      path: ThumbnailExtension/VWXThumbnail.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.files.user-selected.read-only: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: de.netzbub.vwxql.thumbnail
+
+  VWXPreview:
+    type: app-extension
+    platform: macOS
+    sources: [PreviewExtension, Shared]
+    info:
+      path: PreviewExtension/Info.plist
+      properties:
+        CFBundleDisplayName: VWX Preview
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.quicklook.preview
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).PreviewProvider
+          NSExtensionAttributes:
+            QLIsDataBasedPreview: true
+            QLSupportsSearchableItems: false
+            QLSupportedContentTypes: *vwTypes
+    entitlements:
+      path: PreviewExtension/VWXPreview.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.files.user-selected.read-only: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: de.netzbub.vwxql.preview
+
+  vwxextract:
+    type: tool
+    platform: macOS
+    sources: [Tools/vwxextract, Shared]
+    settings:
+      base:
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        DEVELOPMENT_TEAM: ""
