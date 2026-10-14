@@ -25,6 +25,7 @@ Unabhängiges privates Projekt, kein Produkt, keine Verbindung zu Vectorworks, I
 ### Inhalt
 
 - [Zweck](#zweck)
+- [Hintergrund: Warum das mitgelieferte Plugin nicht mehr funktioniert](#hintergrund-warum-das-mitgelieferte-plugin-nicht-mehr-funktioniert)
 - [Funktionsweise](#funktionsweise)
 - [Unterstützte Dateien](#unterstützte-dateien)
 - [Bauen und installieren](#bauen-und-installieren)
@@ -41,6 +42,16 @@ Unabhängiges privates Projekt, kein Produkt, keine Verbindung zu Vectorworks, I
 ### Zweck
 
 Vectorworks liefert ein Quick-Look-Generator-Plugin (`.qlgenerator`) mit. Apple hat die Unterstützung für diesen Plugin-Typ mit macOS 15 Sequoia entfernt; Vectorworks-Dateien zeigen im Finder seither nur ein allgemeines Symbol und keine Vorschau per Leertaste. Quick-Look-Unterstützung muss heute als App-Erweiterung in einem App-Bundle geliefert werden. Genau das leistet dieses Projekt – und nichts darüber hinaus.
+
+---
+
+### Hintergrund: Warum das mitgelieferte Plugin nicht mehr funktioniert
+
+- **Alte Technik.** Bis macOS 10.14 wurde Quick Look über Generator-Plugins (`.qlgenerator`) im QuickLook-Framework erweitert. Mit macOS 10.15 Catalina (2019) führte Apple App-Erweiterungen ein (QuickLook Thumbnailing, Preview-Erweiterungen, vorgestellt auf der WWDC 2019) und erklärte die Generatoren für veraltet ([Howard Oakley, Eclectic Light](https://eclecticlight.co/2024/10/31/how-sequoia-has-changed-quicklook-and-its-thumbnails/)).
+- **Abschaltung mit macOS 15.0 Sequoia (2024).** Seit Sequoia werden Generator-Plugins von Drittanbietern gar nicht mehr geladen; eigene Quick-Look-Unterstützung muss als App-Erweiterung kommen ([Michael Tsai](https://mjtsai.com/blog/2024/11/05/sequoia-no-longer-supports-quicklook-generator-plug-ins/)). Xcode warnte beim Bauen von Generatoren nicht, viele Hersteller haben die Abkündigung daher übersehen.
+- **Das Vectorworks-Plugin.** `VectorWorksQL.qlgenerator` in Vectorworks 2022 und 2024 ist noch ein solcher Generator (Versionskennung „2015“, gebaut gegen das macOS-11/12-SDK, Universal Binary). Es wird installiert und ist signiert, aber Sequoia ignoriert es kommentarlos – Vectorworks-Dateien zeigen nur ein allgemeines Symbol.
+- **Was das alte Plugin eigentlich tat.** Es renderte nichts, sondern las das JPEG-Vorschaubild, das Vectorworks beim Speichern einbettet, und zeichnete es. Neuere Dateien komprimieren ihren Inhalt blockweise mit Google snappy, die Vorschau muss also erst entpackt werden. Genau das baut dieses Projekt als eigenständige Implementierung zur Herstellung der Interoperabilität nach.
+- **Werkzeuge, die nicht mehr helfen.** `qlmanage -m` zeigt nur Generatoren, keine App-Erweiterungen. Registrierte Erweiterungen zeigen `pluginkit -m -p com.apple.quicklook.thumbnail` und Systemeinstellungen → Allgemein → Anmeldeobjekte & Erweiterungen → Quick Look.
 
 ---
 
@@ -120,10 +131,9 @@ project.yml           XcodeGen-Projektdefinition
 
 ### Stand und bekannte Einschränkungen
 
-- Funktioniert für Dateien etwa ab 2013/2014.
-- Ältere Dateien (etwa vor 2013) zeigen noch keine Vorschau – in Untersuchung.
-- Die Vorschau erscheint gelegentlich verzögert, unabhängig von der Dateigröße – in Untersuchung.
-- Dateien ohne eingebettete Vorschau (z. B. mit abgeschalteter Vorschau gespeichert) behalten das allgemeine Symbol.
+- Funktioniert für Dateien, die Vectorworks mit Vorschau gespeichert hat – zuverlässig für Dateien ab Vectorworks 2014.
+- **Ältere Dateien enthalten meist keine verwendbare Vorschau**, es gibt also nichts anzuzeigen. Untersuchung von 15 Beispieldateien aus 1998–2013: Ins 2014er-Format konvertierte Dateien behalten oft einen veralteten Vorschau-Verweis ohne tatsächliches Vorschaubild; Formate vor 2008 (MiniCAD/VectorWorks 8–10) enthalten höchstens Ressourcen-Miniaturen mit 64×64 px. Eine davon anzuzeigen würde einen falschen Planinhalt vortäuschen, daher bleibt bewusst das allgemeine Symbol. **Abhilfe:** Datei in einem aktuellen Vectorworks öffnen und einmal speichern – dabei wird eine neue Vorschau geschrieben.
+- Die Vorschau erscheint gelegentlich mit kurzer Verzögerung. Die Extraktion selbst dauert unabhängig von der Dateigröße etwa 30 ms (gemessen an 25 Dateien bis 30 MB); die Verzögerung entsteht sehr wahrscheinlich beim Start des Erweiterungsprozesses durch macOS (nicht verifiziert).
 
 ---
 
@@ -138,6 +148,7 @@ Idee und Anforderungen stammen von mir. Das Dateiformat wurde in enger Zusammena
 | Version | Änderungen | Datum |
 | :--- | :--- | :--- |
 | v0.1.0 | Erste Version: Thumbnail- und Preview-Erweiterung, Träger-App, Snappy-Decoder, Testwerkzeug `vwxextract`, READMEs (EN/DE), Changelog, GPL-3.0-Lizenz | 2026.10.14 |
+| v0.1.1 | README (EN/DE): Hintergrund zum Ende der `.qlgenerator`-Unterstützung in macOS 15, Analyse von Dateien vor 2014, Zeitmessung; `.history` wird versioniert, nur `.archive` ist git-ignoriert | 2026.10.14 |
 
 ---
 

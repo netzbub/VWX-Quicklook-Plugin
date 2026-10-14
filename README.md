@@ -25,6 +25,7 @@ This is an independent personal project, not a product, and not affiliated with 
 ### Table of contents
 
 - [Purpose](#purpose)
+- [Background: why the bundled plug-in stopped working](#background-why-the-bundled-plug-in-stopped-working)
 - [How it works](#how-it-works)
 - [Supported files](#supported-files)
 - [Build and install](#build-and-install)
@@ -41,6 +42,16 @@ This is an independent personal project, not a product, and not affiliated with 
 ### Purpose
 
 Vectorworks ships a Quick Look generator plug-in (`.qlgenerator`). Apple removed support for this plug-in type in macOS 15 Sequoia, so Vectorworks files show only a generic icon in the Finder and no preview on the space bar. Modern Quick Look support must be delivered as app extensions inside an app bundle. This project provides exactly that — and nothing else.
+
+---
+
+### Background: why the bundled plug-in stopped working
+
+- **Old technology.** Until macOS 10.14, Quick Look was extended by generator plug-ins (`.qlgenerator`) in the QuickLook framework. With macOS 10.15 Catalina (2019) Apple introduced app extensions (QuickLook Thumbnailing, preview extensions, presented at WWDC 2019) and deprecated the generators ([Howard Oakley, Eclectic Light](https://eclecticlight.co/2024/10/31/how-sequoia-has-changed-quicklook-and-its-thumbnails/)).
+- **Removal in macOS 15.0 Sequoia (2024).** Since Sequoia, third-party generator plug-ins are no longer loaded at all; all custom Quick Look support has to be delivered as app extensions ([Michael Tsai](https://mjtsai.com/blog/2024/11/05/sequoia-no-longer-supports-quicklook-generator-plug-ins/)). Xcode issued no warning when building generators, so many vendors missed the deprecation.
+- **The Vectorworks plug-in.** `VectorWorksQL.qlgenerator` in Vectorworks 2022 and 2024 is still such a generator (version string "2015", built against the macOS 11/12 SDK, universal binary). It installs and is code-signed, but Sequoia silently ignores it — Vectorworks files show only a generic icon.
+- **What the old plug-in actually did.** It rendered nothing; it read the JPEG preview that Vectorworks embeds when saving and drew it. Newer files compress their body in chunks with Google snappy, so the preview has to be decompressed first. This project reimplements exactly that, as an independent implementation for interoperability.
+- **Tools that no longer help.** `qlmanage -m` only lists generators and does not see app extensions; registered extensions are shown by `pluginkit -m -p com.apple.quicklook.thumbnail` and under System Settings → General → Login Items & Extensions → Quick Look.
 
 ---
 
@@ -120,10 +131,9 @@ project.yml           XcodeGen project definition
 
 ### Status and known limitations
 
-- Works for files from about 2013/2014 onward.
-- Older files (roughly before 2013) show no preview yet — under investigation.
-- The preview sometimes appears with a short delay that does not correlate with file size — under investigation.
-- Files without an embedded preview (e.g. saved with preview disabled) fall back to the generic icon.
+- Works for files that Vectorworks saved with a preview — reliably for files created with Vectorworks 2014 and later.
+- **Older files usually contain no usable preview**, so there is nothing to show. Analysis of 15 sample files from 1998–2013: files converted to the 2014 format often keep a stale preview pointer without an actual preview image; pre-2008 formats (MiniCAD/VectorWorks 8–10) store at most 64×64 px resource thumbnails. Showing one of those would misrepresent the drawing, so the extension deliberately falls back to the generic icon. **Remedy:** open the file in a current Vectorworks and save it once — this writes a new preview.
+- The preview sometimes appears with a short delay. Extraction itself takes about 30 ms regardless of file size (measured on 25 files up to 30 MB); the delay most likely comes from macOS starting the extension process (not verified).
 
 ---
 
@@ -138,6 +148,7 @@ The idea and the requirements are mine. The file format was analysed, and the ex
 | Version | Changes | Date |
 | :--- | :--- | :--- |
 | v0.1.0 | Initial release: thumbnail and preview extension, host app, snappy decoder, `vwxextract` test tool, READMEs (EN/DE), changelog, GPL-3.0 license | 2026.10.14 |
+| v0.1.1 | README (EN/DE): background on the end of `.qlgenerator` support in macOS 15, analysis of pre-2014 files, timing measurement; `.history` versioned, only `.archive` git-ignored | 2026.10.14 |
 
 ---
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Versions follow a SemVer-style `0.x` scheme.
 
+## [0.1.1] - 2026-10-14
+
+### Changed
+- README (EN/DE): new section on why the bundled `.qlgenerator` stopped working (deprecated since macOS 10.15, removed in macOS 15.0 Sequoia), with sources.
+- README (EN/DE): known limitations rewritten after analysing 15 files from 1998–2013 (no usable embedded preview; remedy: re-save in current Vectorworks) and measuring extraction time (~30 ms, independent of file size).
+- `.gitignore`: `.history/` is versioned; only `.archive/` stays local.
+
 ## [0.1.0] - 2026-10-14
 
 Initial release.
