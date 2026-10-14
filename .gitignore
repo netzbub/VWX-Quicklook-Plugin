@@ -1,11 +1,9 @@
 # macOS
 .DS_Store
 
-# Private project history
+# Local archive (not needed by the project anymore)
 .archive/
 .archiv/
-.history/
-.projekt-history/
 
 # Claude Code local settings
 .claude/settings.local.json
