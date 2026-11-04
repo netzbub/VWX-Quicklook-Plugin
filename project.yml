@@ -13,7 +13,7 @@ configFiles:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "0.1.1"
+    MARKETING_VERSION: "0.1.2"
     CURRENT_PROJECT_VERSION: "1"
     ENABLE_HARDENED_RUNTIME: YES
     DEAD_CODE_STRIPPING: YES
@@ -35,6 +35,8 @@ targets:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: VWX QuickLook
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSApplicationCategoryType: public.app-category.utilities
         NSHumanReadableCopyright: "GPL-3.0-or-later. Vectorworks is a registered trademark of Vectorworks, Inc."
         UTImportedTypeDeclarations:
@@ -77,6 +79,8 @@ targets:
       path: ThumbnailExtension/Info.plist
       properties:
         CFBundleDisplayName: VWX Thumbnail
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.quicklook.thumbnail
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ThumbnailProvider
@@ -100,6 +104,8 @@ targets:
       path: PreviewExtension/Info.plist
       properties:
         CFBundleDisplayName: VWX Preview
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.quicklook.preview
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).PreviewProvider

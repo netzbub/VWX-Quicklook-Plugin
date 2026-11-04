@@ -28,6 +28,7 @@ Unabhängiges privates Projekt, kein Produkt, keine Verbindung zu Vectorworks, I
 - [Hintergrund: Warum das mitgelieferte Plugin nicht mehr funktioniert](#hintergrund-warum-das-mitgelieferte-plugin-nicht-mehr-funktioniert)
 - [Funktionsweise](#funktionsweise)
 - [Unterstützte Dateien](#unterstützte-dateien)
+- [Download](#download)
 - [Bauen und installieren](#bauen-und-installieren)
 - [Projektstruktur](#projektstruktur)
 - [Stand und bekannte Einschränkungen](#stand-und-bekannte-einschränkungen)
@@ -82,6 +83,24 @@ Keine Fremdbibliotheken, kein Netzwerkzugriff, Sandbox mit reinem Lesezugriff.
 | Arbeitsdatei | `.vwxw` | `net.nemetschek.vectorworks.working` |
 
 Getestet mit Dateien aus Vectorworks 2014, 2022 und 2024.
+
+---
+
+### Download
+
+Fertige App ohne Xcode: unter [Releases](https://github.com/netzbub/VWX-Quicklook-Plugin/releases/latest) die Datei `VWXQuickLook-<version>.zip` laden.
+
+1. Zip entpacken und `VWXQuickLook.app` nach `/Applications` ziehen.
+2. App einmal starten. macOS blockiert sie beim ersten Start, weil sie nicht von Apple notarisiert ist (dafür wäre ein kostenpflichtiges Apple-Developer-Konto nötig). Dann: Systemeinstellungen → Datenschutz & Sicherheit → nach unten scrollen → bei „VWXQuickLook“ auf „Dennoch öffnen“ klicken und bestätigen ([Apple Support](https://support.apple.com/de-de/102445)).
+   Alternativ im Terminal die Quarantäne-Markierung entfernen und danach starten:
+
+   ```
+   xattr -dr com.apple.quarantine /Applications/VWXQuickLook.app
+   ```
+
+3. Altes Plugin entfernen, falls vorhanden: `~/Library/QuickLook/VectorWorksQL.qlgenerator`.
+
+Die App ist ad-hoc signiert und nicht notarisiert. Wer der fertigen App nicht vertraut, baut sie selbst aus dem Quelltext (nächster Abschnitt).
 
 ---
 
@@ -149,6 +168,7 @@ Idee und Anforderungen stammen von mir. Das Dateiformat wurde in enger Zusammena
 | :--- | :--- | :--- |
 | v0.1.0 | Erste Version: Thumbnail- und Preview-Erweiterung, Träger-App, Snappy-Decoder, Testwerkzeug `vwxextract`, READMEs (EN/DE), Changelog, GPL-3.0-Lizenz | 2026.10.14 |
 | v0.1.1 | README (EN/DE): Hintergrund zum Ende der `.qlgenerator`-Unterstützung in macOS 15, Analyse von Dateien vor 2014, Zeitmessung; `.history` wird versioniert, nur `.archive` ist git-ignoriert | 2026.10.14 |
+| v0.1.2 | Fertige App als Zip unter Releases, README-Abschnitt „Download“ mit Gatekeeper-Hinweis; Versionsnummer der App kommt aus `MARKETING_VERSION`, Copyright-Text in `App/Info.plist` korrigiert (GPL statt MIT) | 2026.11.04 |
 
 ---
 

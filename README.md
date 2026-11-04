@@ -28,6 +28,7 @@ This is an independent personal project, not a product, and not affiliated with 
 - [Background: why the bundled plug-in stopped working](#background-why-the-bundled-plug-in-stopped-working)
 - [How it works](#how-it-works)
 - [Supported files](#supported-files)
+- [Download](#download)
 - [Build and install](#build-and-install)
 - [Project structure](#project-structure)
 - [Status and known limitations](#status-and-known-limitations)
@@ -82,6 +83,24 @@ No third-party libraries, no network access, sandboxed read-only file access.
 | Working file | `.vwxw` | `net.nemetschek.vectorworks.working` |
 
 Tested with files saved by Vectorworks 2014, 2022 and 2024.
+
+---
+
+### Download
+
+Ready-made app, no Xcode needed: download `VWXQuickLook-<version>.zip` from [Releases](https://github.com/netzbub/VWX-Quicklook-Plugin/releases/latest).
+
+1. Unzip and drag `VWXQuickLook.app` into `/Applications`.
+2. Launch the app once. macOS blocks it on first launch because it is not notarized by Apple (that would require a paid Apple Developer account). Then: System Settings → Privacy & Security → scroll down → click "Open Anyway" next to "VWXQuickLook" and confirm ([Apple Support](https://support.apple.com/en-us/102445)).
+   Alternatively remove the quarantine flag in Terminal, then launch:
+
+   ```
+   xattr -dr com.apple.quarantine /Applications/VWXQuickLook.app
+   ```
+
+3. Remove the old generator if present: `~/Library/QuickLook/VectorWorksQL.qlgenerator`.
+
+The app is ad-hoc signed and not notarized. If you do not trust the ready-made app, build it yourself from source (next section).
 
 ---
 
@@ -149,6 +168,7 @@ The idea and the requirements are mine. The file format was analysed, and the ex
 | :--- | :--- | :--- |
 | v0.1.0 | Initial release: thumbnail and preview extension, host app, snappy decoder, `vwxextract` test tool, READMEs (EN/DE), changelog, GPL-3.0 license | 2026.10.14 |
 | v0.1.1 | README (EN/DE): background on the end of `.qlgenerator` support in macOS 15, analysis of pre-2014 files, timing measurement; `.history` versioned, only `.archive` git-ignored | 2026.10.14 |
+| v0.1.2 | Ready-made app as zip under Releases, README section "Download" with Gatekeeper note; app version now taken from `MARKETING_VERSION`, copyright string in `App/Info.plist` fixed (GPL instead of MIT) | 2026.11.04 |
 
 ---
 

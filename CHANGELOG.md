@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here. Versions follow a SemVer-style `0.x` scheme.
 
+## [0.1.2] - 2026-11-04
+
+### Added
+- Ready-made, ad-hoc signed app `VWXQuickLook-0.1.2.zip` as GitHub release asset.
+- README (EN/DE): section "Download" with Gatekeeper instructions.
+
+### Fixed
+- App and extensions reported version 1.0; `CFBundleShortVersionString`/`CFBundleVersion` now come from `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION`.
+- `App/Info.plist` copyright string said "MIT License"; now "GPL-3.0-or-later".
+
 ## [0.1.1] - 2026-10-14
 
 ### Changed
